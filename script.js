@@ -4,7 +4,7 @@ function createMysticalIdleAnimation(canvasId) {
   const ripples = [];
   const particles = [];
 
-  const colors = ["#6A0DAD", "#8A2BE2", "#9370DB", "#D8BFD8", "#FFD700"];
+  const colors = ["#FF0000", "#00FF00", "#00FFFF", "#FFD700", "#FFFFFF"];
 
   function addRipple() {
     ripples.push({
