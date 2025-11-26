@@ -4,10 +4,8 @@ function createMysticalIdleAnimation(canvasId) {
   const ripples = [];
   const particles = [];
 
-  // Purple mystical palette
   const colors = ["#6A0DAD", "#8A2BE2", "#9370DB", "#D8BFD8", "#FFD700"];
 
-  // Add ripple
   function addRipple() {
     ripples.push({
       x: Math.random() * canvas.width,
@@ -18,7 +16,6 @@ function createMysticalIdleAnimation(canvasId) {
     });
   }
 
-  // Add particle
   function addParticle() {
     particles.push({
       x: Math.random() * canvas.width,
@@ -34,7 +31,6 @@ function createMysticalIdleAnimation(canvasId) {
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw ripples
     ripples.forEach((ripple, index) => {
       ctx.beginPath();
       ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
@@ -43,14 +39,13 @@ function createMysticalIdleAnimation(canvasId) {
       ctx.lineWidth = 1.5;
       ctx.stroke();
 
-      ripple.radius += 0.2; // slow expansion
-      ripple.alpha -= 0.001; // fade out
+      ripple.radius += 0.2;
+      ripple.alpha -= 0.001;
 
       if (ripple.alpha <= 0) ripples.splice(index, 1);
     });
 
-    // Draw particles
-    particles.forEach((p, index) => {
+    particles.forEach((p) => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
       ctx.fillStyle = p.color;
@@ -60,7 +55,6 @@ function createMysticalIdleAnimation(canvasId) {
       p.x += p.dx;
       p.y += p.dy;
 
-      // wrap around edges
       if (p.x < 0) p.x = canvas.width;
       if (p.x > canvas.width) p.x = 0;
       if (p.y < 0) p.y = canvas.height;
@@ -71,9 +65,11 @@ function createMysticalIdleAnimation(canvasId) {
     requestAnimationFrame(draw);
   }
 
-  // Add elements periodically
-  setInterval(addRipple, 3000); // ripple every 3s
-  for (let i = 0; i < 50; i++) addParticle(); // initial particles
+  setInterval(addRipple, 3000);
+  for (let i = 0; i < 50; i++) addParticle();
 
   draw();
-}
+} // ← closing curly bracket of the function
+
+// Run the animation on the canvas
+createMysticalIdleAnimation("mysticalCanvas");
