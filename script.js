@@ -3,7 +3,6 @@ function createWaterWaveAnimation(canvasId) {
   const ctx = canvas.getContext("2d");
   const ripples = [];
 
-  // Watery bluish-purple tones
   function randomWaterColor() {
     const hue = 240 + Math.random() * 30; // blue-purple range
     const saturation = 60 + Math.random() * 20;
@@ -24,8 +23,8 @@ function createWaterWaveAnimation(canvasId) {
       color: randomWaterColor(),
       alpha: 0.9,
       wavePhase: Math.random() * Math.PI * 2,
-      frequency: Math.random() * 0.1 + 0.05, // controls wave oscillation
-      amplitude: Math.random() * 3 + 2       // controls ripple distortion
+      frequency: Math.random() * 0.1 + 0.05,
+      amplitude: Math.random() * 3 + 2
     });
   }
 
@@ -35,14 +34,11 @@ function createWaterWaveAnimation(canvasId) {
     ripples.forEach((ripple, index) => {
       ctx.beginPath();
 
-      const steps = 180; // high resolution for smoothness
+      const steps = 180;
       for (let i = 0; i <= steps; i++) {
         const angle = (i / steps) * Math.PI * 2;
-
-        // Sinusoidal distortion for water-like ripples
         const distortion = Math.sin(angle * 12 + ripple.wavePhase + ripple.radius * ripple.frequency) * ripple.amplitude;
         const r = ripple.radius + distortion;
-
         const px = ripple.x + r * Math.cos(angle);
         const py = ripple.y + r * Math.sin(angle);
 
@@ -56,20 +52,19 @@ function createWaterWaveAnimation(canvasId) {
       ctx.globalAlpha = ripple.alpha;
       ctx.stroke();
 
-      // Soft watery glow
+      // Ring-style glow (transparent center)
       const gradient = ctx.createRadialGradient(
-        ripple.x, ripple.y, ripple.radius * 0.7,
-        ripple.x, ripple.y, ripple.radius * 1.6
+        ripple.x, ripple.y, ripple.radius * 0.6,   // fully transparent center
+        ripple.x, ripple.y, ripple.radius * 1.4    // glow fades outward
       );
-      gradient.addColorStop(0, `${ripple.color.replace("hsl", "hsla").replace(")", ",0.25)")}`);
-      gradient.addColorStop(1, "rgba(255,255,255,0)");
+      gradient.addColorStop(0, "rgba(255,255,255,0)"); // transparent middle
+      gradient.addColorStop(0.5, `${ripple.color.replace("hsl", "hsla").replace(")", ",0.3)")}`); // glow band
+      gradient.addColorStop(1, "rgba(255,255,255,0)"); // fade out again
+
       ctx.fillStyle = gradient;
       ctx.fill();
 
-      // Expansion
       ripple.radius += ripple.growth;
-
-      // Fade out gradually
       ripple.alpha -= 0.004;
       if (ripple.alpha <= 0) ripples.splice(index, 1);
     });
@@ -78,9 +73,8 @@ function createWaterWaveAnimation(canvasId) {
     requestAnimationFrame(draw);
   }
 
-  setInterval(addRipple, 1000); // natural pacing
+  setInterval(addRipple, 1000);
   draw();
 }
 
-// Run the animation
 createWaterWaveAnimation("mysticalCanvas");
