@@ -19,10 +19,11 @@ function createMysticalIdleAnimation(canvasId) {
       x,
       y,
       radius: 0,
-      growth: Math.random() * 1.5 + 0.5, // expansion speed
+      growth: Math.random() * 1.5 + 0.5,
       thickness: Math.random() * 2 + 1,
       color: randomDarkPurple(),
-      alpha: 1
+      alpha: 1,
+      wobble: Math.random() * 0.2 + 0.05 // irregular edge distortion
     });
   }
 
@@ -39,7 +40,6 @@ function createMysticalIdleAnimation(canvasId) {
         const dist = Math.sqrt(dx * dx + dy * dy);
 
         if (dist < r1.radius + r2.radius) {
-          // Collision → reduce growth speed but allow flow-through
           r1.growth = Math.max(0.1, r1.growth * 0.95);
           r2.growth = Math.max(0.1, r2.growth * 0.95);
         }
@@ -48,6 +48,27 @@ function createMysticalIdleAnimation(canvasId) {
 
     // Draw ripples
     ripples.forEach((ripple, index) => {
+      ctx.beginPath();
+
+      // Organic ripple: draw distorted circle
+      const steps = 64; // resolution of the ripple edge
+      for (let i = 0; i <= steps; i++) {
+        const angle = (i / steps) * Math.PI * 2;
+        const distortion = Math.sin(angle * 6 + ripple.radius * ripple.wobble) * 3; 
+        const r = ripple.radius + distortion;
+        const px = ripple.x + r * Math.cos(angle);
+        const py = ripple.y + r * Math.sin(angle);
+
+        if (i === 0) ctx.moveTo(px, py);
+        else ctx.lineTo(px, py);
+      }
+
+      ctx.closePath();
+      ctx.strokeStyle = ripple.color;
+      ctx.lineWidth = ripple.thickness;
+      ctx.globalAlpha = ripple.alpha;
+      ctx.stroke();
+
       // Aura effect (matte glow)
       const gradient = ctx.createRadialGradient(
         ripple.x, ripple.y, ripple.radius * 0.8,
@@ -55,14 +76,6 @@ function createMysticalIdleAnimation(canvasId) {
       );
       gradient.addColorStop(0, ripple.color);
       gradient.addColorStop(1, "rgba(0,0,0,0.4)");
-
-      ctx.beginPath();
-      ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
-      ctx.strokeStyle = ripple.color;
-      ctx.lineWidth = ripple.thickness;
-      ctx.globalAlpha = ripple.alpha;
-      ctx.stroke();
-
       ctx.fillStyle = gradient;
       ctx.fill();
 
