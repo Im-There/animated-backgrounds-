@@ -10,9 +10,12 @@ function createMysticalIdleAnimation(canvasId) {
     ripples.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      radius: 0,
+      length: Math.random() * 80 + 40, // ripple length
+      dx: (Math.random() - 0.5) * 2,   // horizontal drift
+      dy: (Math.random() - 0.5) * 2,   // vertical drift
       color: colors[Math.floor(Math.random() * colors.length)],
-      alpha: 1
+      alpha: 1,
+      width: Math.random() * 2 + 1     // line thickness
     });
   }
 
@@ -20,8 +23,8 @@ function createMysticalIdleAnimation(canvasId) {
     particles.push({
       x: Math.random() * canvas.width,
       y: Math.random() * canvas.height,
-      dx: (Math.random() - 0.5) * 0.2,
-      dy: (Math.random() - 0.5) * 0.2,
+      dx: (Math.random() - 0.5) * 0.5,
+      dy: (Math.random() - 0.5) * 0.5,
       size: Math.random() * 3 + 2,
       color: colors[Math.floor(Math.random() * colors.length)],
       alpha: 0.8
@@ -31,20 +34,24 @@ function createMysticalIdleAnimation(canvasId) {
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+    // Draw ripples as flowing lines
     ripples.forEach((ripple, index) => {
       ctx.beginPath();
-      ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+      ctx.moveTo(ripple.x, ripple.y);
+      ctx.lineTo(ripple.x + ripple.length, ripple.y);
       ctx.strokeStyle = ripple.color;
       ctx.globalAlpha = ripple.alpha;
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = ripple.width;
       ctx.stroke();
 
-      ripple.radius += 0.2;
-      ripple.alpha -= 0.001;
+      ripple.x += ripple.dx;
+      ripple.y += ripple.dy;
+      ripple.alpha -= 0.005;
 
       if (ripple.alpha <= 0) ripples.splice(index, 1);
     });
 
+    // Draw particles
     particles.forEach((p) => {
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
@@ -65,11 +72,11 @@ function createMysticalIdleAnimation(canvasId) {
     requestAnimationFrame(draw);
   }
 
-  setInterval(addRipple, 3000);
+  setInterval(addRipple, 1000); // spawn ripples more frequently
   for (let i = 0; i < 50; i++) addParticle();
 
   draw();
-} // ← closing curly bracket of the function
+}
 
-// Run the animation on the canvas
+// Run the animation
 createMysticalIdleAnimation("mysticalCanvas");
