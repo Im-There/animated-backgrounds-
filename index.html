@@ -2,21 +2,24 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Mystical Animation</title>
   <style>
-    body {
+    html, body {
       margin: 0;
-      background: black;
+      height: 100%;
+      background: radial-gradient(circle at center, #0a0a0a, #000000);
       overflow: hidden;
     }
     canvas {
       display: block;
+      width: 100%;
+      height: 100%;
     }
   </style>
 </head>
 <body>
-  <canvas id="mysticalCanvas" width="800" height="600"></canvas>
-  <script src="script.js"></script>
+  <canvas id="mysticalCanvas" aria-label="Mystical ripple animation"></canvas>
+  <script src="script.js" defer></script>
 </body>
 </html>
-
