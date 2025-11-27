@@ -3,11 +3,11 @@ function createMysticalIdleAnimation(canvasId) {
   const ctx = canvas.getContext("2d");
   const ripples = [];
 
-  // Generate random purple shades (hue ~270, saturation high, lightness varies)
-  function randomPurple() {
+  // Generate dark matte purple shades
+  function randomDarkPurple() {
     const hue = 270; // purple hue
-    const saturation = Math.floor(Math.random() * 30 + 70); // 70–100%
-    const lightness = Math.floor(Math.random() * 50 + 25); // 25–75% (light to dark)
+    const saturation = Math.floor(Math.random() * 20 + 40); // 40–60% muted
+    const lightness = Math.floor(Math.random() * 20 + 15); // 15–35% dark tones
     return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
   }
 
@@ -18,20 +18,18 @@ function createMysticalIdleAnimation(canvasId) {
     ripples.push({
       x,
       y,
-      dx: (Math.random() - 0.5) * 4,
-      dy: (Math.random() - 0.5) * 4,
-      length: Math.random() * 200 + 150,
+      radius: 0,
+      growth: Math.random() * 1.5 + 0.5, // expansion speed
       thickness: Math.random() * 2 + 1,
-      color: randomPurple(), // use dynamic purple
-      alpha: 1,
-      speed: 2
+      color: randomDarkPurple(),
+      alpha: 1
     });
   }
 
   function draw() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Ripple interactions: slow down when close
+    // Ripple interactions: flow through but slow down
     for (let i = 0; i < ripples.length; i++) {
       const r1 = ripples[i];
       for (let j = i + 1; j < ripples.length; j++) {
@@ -40,27 +38,41 @@ function createMysticalIdleAnimation(canvasId) {
         const dy = r1.y - r2.y;
         const dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 60) {
-          r1.speed = Math.max(0.5, r1.speed * 0.9);
-          r2.speed = Math.max(0.5, r2.speed * 0.9);
+        if (dist < r1.radius + r2.radius) {
+          // Collision → reduce growth speed but allow flow-through
+          r1.growth = Math.max(0.1, r1.growth * 0.95);
+          r2.growth = Math.max(0.1, r2.growth * 0.95);
         }
       }
     }
 
     // Draw ripples
     ripples.forEach((ripple, index) => {
+      // Aura effect (matte glow)
+      const gradient = ctx.createRadialGradient(
+        ripple.x, ripple.y, ripple.radius * 0.8,
+        ripple.x, ripple.y, ripple.radius * 1.3
+      );
+      gradient.addColorStop(0, ripple.color);
+      gradient.addColorStop(1, "rgba(0,0,0,0.4)");
+
       ctx.beginPath();
-      ctx.moveTo(ripple.x, ripple.y);
-      ctx.lineTo(ripple.x + ripple.length, ripple.y);
+      ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
       ctx.strokeStyle = ripple.color;
-      ctx.globalAlpha = ripple.alpha;
       ctx.lineWidth = ripple.thickness;
+      ctx.globalAlpha = ripple.alpha;
       ctx.stroke();
 
-      ripple.x += ripple.dx * ripple.speed;
-      ripple.y += ripple.dy * ripple.speed;
+      ctx.fillStyle = gradient;
+      ctx.fill();
 
-      ripple.alpha -= 0.003;
+      // Expansion
+      ripple.radius += ripple.growth;
+
+      // Fade only when large enough
+      if (ripple.radius > canvas.width * 0.5) {
+        ripple.alpha -= 0.01;
+      }
 
       if (ripple.alpha <= 0) ripples.splice(index, 1);
     });
