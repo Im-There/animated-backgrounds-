@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Ripple Animation</title>
+  <title>Ripple Pond Animation</title>
   <style>
     body {
       margin: 0;
@@ -24,46 +24,68 @@
     const canvas = document.getElementById("rippleCanvas");
     const ctx = canvas.getContext("2d");
 
-    // Fullscreen canvas
     canvas.width = window.innerWidth;
     canvas.height = window.innerHeight;
 
-    let phase = 0;
+    const ripples = [];
 
-    function drawRipple() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+    function addRipple() {
+      let x, y;
 
-      ctx.beginPath();
-      ctx.lineWidth = 2;
-      ctx.strokeStyle = "hsl(260, 70%, 60%)"; // purple tone
-
-      const amplitude = 50;   // height of wave
-      const frequency = 0.02; // number of waves across width
-      const baseline = canvas.height / 2; // center line
-
-      // Draw sine wave across the screen
-      for (let x = 0; x <= canvas.width + 50; x++) {
-        const y = baseline + Math.sin(x * frequency + phase) * amplitude;
-        if (x === 0) ctx.moveTo(x, y);
-        else ctx.lineTo(x, y);
+      // 70% chance center, 30% chance edges
+      if (Math.random() < 0.7) {
+        x = canvas.width / 2;
+        y = canvas.height / 2;
+      } else {
+        const edge = Math.floor(Math.random() * 4);
+        if (edge === 0) { x = Math.random() * canvas.width; y = 0; }
+        if (edge === 1) { x = canvas.width; y = Math.random() * canvas.height; }
+        if (edge === 2) { x = Math.random() * canvas.width; y = canvas.height; }
+        if (edge === 3) { x = 0; y = Math.random() * canvas.height; }
       }
 
-      ctx.stroke();
-
-      // Glow effect
-      ctx.strokeStyle = "hsla(260, 70%, 60%, 0.3)";
-      ctx.lineWidth = 8;
-      ctx.stroke();
-
-      // Animate phase shift
-      phase += 0.05;
-
-      requestAnimationFrame(drawRipple);
+      ripples.push({
+        x,
+        y,
+        radius: 0,
+        alpha: 1,
+        growth: 0.8,   // slower expansion speed
+        thickness: 4
+      });
     }
 
-    drawRipple();
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Handle window resize
+      ripples.forEach((ripple, index) => {
+        // Main ripple line
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `hsla(260, 70%, 60%, ${ripple.alpha})`;
+        ctx.lineWidth = ripple.thickness;
+        ctx.stroke();
+
+        // Subtle glow
+        ctx.beginPath();
+        ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
+        ctx.strokeStyle = `hsla(260, 70%, 60%, ${ripple.alpha * 0.2})`;
+        ctx.lineWidth = ripple.thickness * 0.5;
+        ctx.stroke();
+
+        // Update ripple
+        ripple.radius += ripple.growth;   // slower growth
+        ripple.alpha -= 0.01;             // fade gradually
+
+        if (ripple.alpha <= 0) ripples.splice(index, 1);
+      });
+
+      requestAnimationFrame(draw);
+    }
+
+    // Spawn ripples slower (every 2.5 seconds instead of 1 second)
+    setInterval(addRipple, 2500);
+    draw();
+
     window.addEventListener("resize", () => {
       canvas.width = window.innerWidth;
       canvas.height = window.innerHeight;
