@@ -5,8 +5,8 @@ function draw() {
 
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
-      ripple.x, ripple.y, ripple.radius * 0.1,   // tighter bright core
-      ripple.x, ripple.y, ripple.radius * 4.0    // larger spread for glow
+      ripple.x, ripple.y, ripple.radius * 0.1,
+      ripple.x, ripple.y, ripple.radius * 4.0
     );
 
     // Brighter, more luminous blues
@@ -21,7 +21,9 @@ function draw() {
 
     // Update ripple
     ripple.radius += ripple.growth;
-    ripple.alpha -= 0.0003;   // slower fade → more visible
+
+    // Fade a bit faster so alpha hits 0 at removal time
+    ripple.alpha -= 0.0005;   
 
     // Remove when invisible and large enough
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
