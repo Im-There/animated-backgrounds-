@@ -1,18 +1,18 @@
 function draw() {
-  // Fade the canvas more gently (less opaque)
-  ctx.fillStyle = "rgba(0, 0, 0, 0.02)"; 
+  // Fade the canvas gently
+  ctx.fillStyle = "rgba(0, 0, 0, 0.02)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
       ripple.x, ripple.y, ripple.radius * 0.2,   // inner fade start
-      ripple.x, ripple.y, ripple.radius * 2.2    // outer fade end
+      ripple.x, ripple.y, ripple.radius * 3.0    // outer fade end (larger for smoother transition)
     );
 
-    // Brighter blues so they stand out
-    gradient.addColorStop(0, `rgba(180, 220, 255, ${ripple.alpha})`);   // bright center
-    gradient.addColorStop(0.5, `rgba(140, 200, 255, ${ripple.alpha * 0.6})`); // mid fade
-    gradient.addColorStop(1, `rgba(100, 180, 255, 0)`); // transparent edge
+    // Brighter blues fading completely into transparent
+    gradient.addColorStop(0, `rgba(180, 220, 255, ${ripple.alpha})`);
+    gradient.addColorStop(0.5, `rgba(140, 200, 255, ${ripple.alpha * 0.5})`);
+    gradient.addColorStop(1, `rgba(100, 180, 255, 0)`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
@@ -21,9 +21,12 @@ function draw() {
 
     // Update ripple
     ripple.radius += ripple.growth;
-    ripple.alpha -= 0.001;   // fade a bit faster so it’s visible
+    ripple.alpha -= 0.0007;   // slower fade → lasts longer
 
-    if (ripple.alpha <= 0) ripples.splice(index, 1);
+    // Only remove ripple once it's both invisible AND large enough
+    if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
+      ripples.splice(index, 1);
+    }
   });
 
   requestAnimationFrame(draw);
