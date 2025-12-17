@@ -8,8 +8,10 @@ function draw() {
       ripple.x, ripple.y, ripple.radius * 4.0
     );
 
-    // Fade from center outward
-    gradient.addColorStop(0, `rgba(220, 240, 255, 0)`);
+    // Center fades out as ripple grows
+    const centerAlpha = Math.max(0, ripple.alpha * (1 - ripple.radius / (canvas.width * 0.5)));
+
+    gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
     gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.7})`);
     gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha})`);
 
@@ -19,7 +21,7 @@ function draw() {
     ctx.fill();
 
     ripple.radius += ripple.growth;
-    ripple.alpha -= ripple.fade || 0.005; // faster fade, or use per-ripple fade
+    ripple.alpha -= ripple.fade || 0.005;
 
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
       ripples.splice(index, 1);
