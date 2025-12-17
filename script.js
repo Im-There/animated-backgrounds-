@@ -1,40 +1,3 @@
-const canvas = document.getElementById("mysticalCanvas");
-const ctx = canvas.getContext("2d");
-
-// Resize canvas to full window resolution
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-// Ripple storage
-let ripples = [];
-
-// Spawn ripple on click (still works)
-canvas.addEventListener("click", (e) => {
-  spawnRipple(e.clientX, e.clientY);
-});
-
-// Function to spawn a ripple
-function spawnRipple(x, y) {
-  ripples.push({
-    x,
-    y,
-    radius: 10 + Math.random() * 10,   // small initial radius
-    alpha: 1,
-    growth: 1.5 + Math.random() * 1.5  // varied growth speed
-  });
-}
-
-// Auto-spawn ripples like rain
-setInterval(() => {
-  const x = Math.random() * canvas.width;
-  const y = Math.random() * canvas.height * 0.9; // near bottom surface
-  spawnRipple(x, y);
-}, 200); // every 200ms → drizzle; lower for heavier rain
-
 function draw() {
   // Darker background fade for contrast
   ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
@@ -57,7 +20,7 @@ function draw() {
 
     // Update ripple
     ripple.radius += ripple.growth;
-    ripple.alpha -= 0.0007; // fade tuned for rain effect
+    ripple.alpha -= 0.002; // faster fade
 
     // Remove when invisible and large enough
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
@@ -67,5 +30,3 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
-
-draw();
