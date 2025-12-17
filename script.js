@@ -19,7 +19,7 @@ function draw() {
     ctx.fill();
 
     ripple.radius += ripple.growth;
-    ripple.alpha -= 0.002; // faster fade
+    ripple.alpha -= ripple.fade || 0.005; // faster fade, or use per-ripple fade
 
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
       ripples.splice(index, 1);
