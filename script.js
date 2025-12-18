@@ -24,7 +24,7 @@ canvas.addEventListener("click", (e) => {
   });
 });
 
-// Auto-spawn ripples every 700ms at random positions
+// Auto-spawn ripples every 400ms at random positions
 setInterval(() => {
   ripples.push({
     x: Math.random() * canvas.width,
@@ -34,7 +34,7 @@ setInterval(() => {
     growth: 1.2,
     fade: 0.02
   });
-}, 700);
+}, 400);
 
 function draw() {
   // Slightly darken background each frame
@@ -47,15 +47,15 @@ function draw() {
       ripple.x, ripple.y, ripple.radius * 6.0     // much larger outer radius
     );
 
-    // Softer alpha values for blending
+    // Softer alpha values for faster blending
     const centerAlpha = Math.max(
       0,
-      ripple.alpha * 0.4 * (1 - ripple.radius / (canvas.width * 0.8))
+      ripple.alpha * 0.25 * (1 - ripple.radius / (canvas.width * 0.8))
     );
 
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.25})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.15})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.15})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.08})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
@@ -65,10 +65,10 @@ function draw() {
     // Slower expansion but much larger coverage
     ripple.radius += ripple.growth * 0.2;
 
-    // Faster fading, but leave a ghost ripple effect
+    // Faster fading
     ripple.alpha -= ripple.fade || 0.02;
 
-    // Keep ghost ripple faintly visible even after alpha fades
+    // Remove ripple when invisible
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 1.2) {
       ripples.splice(index, 1);
     }
