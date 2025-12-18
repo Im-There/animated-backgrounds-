@@ -19,8 +19,8 @@ canvas.addEventListener("click", (e) => {
     y: e.clientY,
     radius: 5,
     alpha: 1,
-    growth: 1.5,   // slightly faster growth so it reaches large size
-    fade: 0.02     // fade rate
+    growth: 2.0,   // stronger growth so it reaches large radius
+    fade: 0.01     // slower fade so ripple lasts longer
   });
 });
 
@@ -31,8 +31,8 @@ setInterval(() => {
     y: Math.random() * canvas.height,
     radius: 5,
     alpha: 1,
-    growth: 1.5,
-    fade: 0.02
+    growth: 2.0,
+    fade: 0.01
   });
 }, 400);
 
@@ -44,29 +44,29 @@ function draw() {
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
       ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
-      ripple.x, ripple.y, ripple.radius * 12.0    // much larger outer radius
+      ripple.x, ripple.y, ripple.radius * 15.0    // much larger outer radius
     );
 
     // Softer alpha values for blending
     const centerAlpha = Math.max(
       0,
-      ripple.alpha * 0.25 * (1 - ripple.radius / (canvas.width * 1.2))
+      ripple.alpha * 0.3 * (1 - ripple.radius / (canvas.width * 1.5))
     );
 
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.12})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.05})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.18})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.08})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Expand slower but allow much larger coverage
-    ripple.radius += ripple.growth * 0.2;
+    // Expand slower per frame but allow much larger coverage
+    ripple.radius += ripple.growth * 0.25;
 
-    // Fade out
-    ripple.alpha -= ripple.fade || 0.02;
+    // Slower fading so ripple can reach full size
+    ripple.alpha -= ripple.fade || 0.001;
 
     // Remove ripple once fully invisible
     if (ripple.alpha <= 0) {
