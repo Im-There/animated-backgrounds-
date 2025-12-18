@@ -19,7 +19,7 @@ canvas.addEventListener("click", (e) => {
     y: e.clientY,
     radius: 5,
     alpha: 1,
-    growth: 2.0,   // faster growth
+    growth: 2.5,   // larger growth so ripple expands more
     fade: 0.01     // slower fade so ripple lasts longer
   });
 });
@@ -31,7 +31,7 @@ setInterval(() => {
     y: Math.random() * canvas.height,
     radius: 5,
     alpha: 1,
-    growth: 2.0,
+    growth: 2.5,
     fade: 0.01
   });
 }, 400);
@@ -42,30 +42,34 @@ function draw() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ripples.forEach((ripple, index) => {
-    // Gradient is just for visual effect, not controlling expansion
     const gradient = ctx.createRadialGradient(
-      ripple.x, ripple.y, ripple.radius * 0.05,
-      ripple.x, ripple.y, ripple.radius * 15.0
+      ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
+      ripple.x, ripple.y, ripple.radius * 20.0    // much larger outer radius
     );
 
-    // Alpha controls visibility only
-    gradient.addColorStop(0, `rgba(220, 240, 255, ${ripple.alpha * 0.3})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.15})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.05})`);
+    // Softer alpha values for blending
+    const centerAlpha = Math.max(
+      0,
+      ripple.alpha * 0.3 * (1 - ripple.radius / (canvas.width * 1.5))
+    );
+
+    gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.18})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.08})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Expansion continues regardless of alpha
+    // Faster expansion for larger ripples
     ripple.radius += ripple.growth * 0.4;
 
-    // Fade out separately
+    // Slower fading so ripple can reach full size
     ripple.alpha -= ripple.fade || 0.01;
 
-    // Remove ripple only when fully faded AND expanded beyond 50px
-    if (ripple.alpha <= 0 && ripple.radius >= 50) {
+    // Remove ripple once fully invisible
+    if (ripple.alpha <= 0) {
       ripples.splice(index, 1);
     }
   });
