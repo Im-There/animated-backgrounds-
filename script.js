@@ -20,8 +20,11 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    ripple.radius += ripple.growth;
-    ripple.alpha -= ripple.fade || 0.005;
+    // Slower expansion
+    ripple.radius += ripple.growth * 0.5;  
+
+    // Faster fading
+    ripple.alpha -= ripple.fade || 0.01;  
 
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
       ripples.splice(index, 1);
