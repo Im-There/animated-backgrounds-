@@ -19,22 +19,22 @@ canvas.addEventListener("click", (e) => {
     y: e.clientY,
     radius: 5,
     alpha: 1,
-    growth: 2,
-    fade: 0.025
+    growth: 1.2,   // slower expansion speed
+    fade: 0.02     // fade a bit faster
   });
 });
 
-// Auto-spawn ripples every 500ms at random positions
+// Auto-spawn ripples every 700ms at random positions
 setInterval(() => {
   ripples.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
     radius: 5,
     alpha: 1,
-    growth: 2,
-    fade: 0.025
+    growth: 1.2,
+    fade: 0.02
   });
-}, 500);
+}, 700);
 
 function draw() {
   // Slightly darken background each frame
@@ -43,32 +43,33 @@ function draw() {
 
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
-      ripple.x, ripple.y, ripple.radius * 0.1,
-      ripple.x, ripple.y, ripple.radius * 4.0
+      ripple.x, ripple.y, ripple.radius * 0.05,   // tighter inner glow
+      ripple.x, ripple.y, ripple.radius * 6.0     // much larger outer radius
     );
 
+    // Softer alpha values for blending
     const centerAlpha = Math.max(
       0,
-      ripple.alpha * 0.6 * (1 - ripple.radius / (canvas.width * 0.5))
+      ripple.alpha * 0.4 * (1 - ripple.radius / (canvas.width * 0.8))
     );
 
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.5})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.4})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.25})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.15})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Slower expansion (reduced multiplier from 0.5 → 0.3)
-    ripple.radius += ripple.growth * 0.3;
+    // Slower expansion but much larger coverage
+    ripple.radius += ripple.growth * 0.2;
 
-    // Faster fading
-    ripple.alpha -= ripple.fade || 0.025;
+    // Faster fading, but leave a ghost ripple effect
+    ripple.alpha -= ripple.fade || 0.02;
 
-    // Remove ripple when invisible
-    if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
+    // Keep ghost ripple faintly visible even after alpha fades
+    if (ripple.alpha <= 0 && ripple.radius > canvas.width * 1.2) {
       ripples.splice(index, 1);
     }
   });
