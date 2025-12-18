@@ -9,11 +9,12 @@ function draw() {
     );
 
     // Center fades out as ripple grows
-    const centerAlpha = Math.max(0, ripple.alpha * (1 - ripple.radius / (canvas.width * 0.5)));
+    const centerAlpha = Math.max(0, ripple.alpha * 0.6 * (1 - ripple.radius / (canvas.width * 0.5)));
 
+    // Reduced alpha multipliers for transparency
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.7})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.5})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.4})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
