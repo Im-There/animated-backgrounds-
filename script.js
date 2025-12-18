@@ -61,8 +61,8 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Slower expansion
-    ripple.radius += ripple.growth * 0.5;
+    // Slower expansion (reduced multiplier from 0.5 → 0.3)
+    ripple.radius += ripple.growth * 0.3;
 
     // Faster fading
     ripple.alpha -= ripple.fade || 0.025;
