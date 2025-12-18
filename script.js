@@ -53,21 +53,21 @@ function draw() {
       ripple.x, ripple.y, ripple.radius * 25.0    // outer glow
     );
 
-    gradient.addColorStop(0,  `rgba(220, 240, 255, ${ripple.alpha * 0.15})`);
+    gradient.addColorStop(0,  `rgba(220, 240, 255, ${ripple.alpha * 0.25})`);
     gradient.addColorStop(0.5,`rgba(160, 210, 255, ${ripple.alpha * 0.7})`);
     gradient.addColorStop(1,  `rgba(120, 190, 255, ${ripple.alpha * 1.0})`);
 
-    // Draw the glowing ripple
+    // Draw glowing ripple
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Punch out transparent center (hollow ring effect)
+    // Punch out a fully hollow center
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
-    const holeRadius = ripple.radius * 0.45; // adjust factor for hole size
+    const holeRadius = ripple.radius * 0.6; // bigger factor = larger hollow
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
