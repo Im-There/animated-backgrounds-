@@ -19,8 +19,8 @@ canvas.addEventListener("click", (e) => {
     y: e.clientY,
     radius: 5,
     alpha: 1,
-    growth: 2.5,   // stronger growth so ripple expands more
-    fade: 0.01     // slower fade so ripple lasts longer
+    growth: 3.0,   // increased growth rate
+    fade: 0.005    // slower fade so ripple lasts longer
   });
 });
 
@@ -31,8 +31,8 @@ setInterval(() => {
     y: Math.random() * canvas.height,
     radius: 5,
     alpha: 1,
-    growth: 2.5,
-    fade: 0.01
+    growth: 3.0,
+    fade: 0.005
   });
 }, 400);
 
@@ -44,7 +44,7 @@ function draw() {
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
       ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
-      ripple.x, ripple.y, ripple.radius * 20.0    // much larger outer radius
+      ripple.x, ripple.y, ripple.radius * 25.0    // much larger outer radius
     );
 
     // Softer alpha values for blending
@@ -63,10 +63,18 @@ function draw() {
     ctx.fill();
 
     // Faster expansion for larger ripples
-    ripple.radius += ripple.growth * 0.4;
+    ripple.radius += ripple.growth * 0.5;
 
     // Slower fading so ripple can reach full size
-    ripple.alpha -= ripple.fade || 0.01;
+    ripple.alpha -= ripple.fade || 0.005;
 
-    // Remove ripple only when fully faded AND radius >= 100
-   
+    // Remove ripple only when fully faded AND radius >= 150
+    if (ripple.alpha <= 0 && ripple.radius >= 150) {
+      ripples.splice(index, 1);
+    }
+  });
+
+  requestAnimationFrame(draw);
+}
+
+draw();
