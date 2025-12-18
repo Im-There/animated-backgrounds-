@@ -47,24 +47,36 @@ function draw() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ripples.forEach((ripple, index) => {
+    // Create radial gradient for glow
     const gradient = ctx.createRadialGradient(
       ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
       ripple.x, ripple.y, ripple.radius * 25.0    // outer glow
     );
 
-    // Much more visible: center fades, edges glow bright
-    gradient.addColorStop(0, `rgba(220, 240, 255, ${ripple.alpha * 0.2})`);   // center faint but visible
-    gradient.addColorStop(0.4, `rgba(160, 210, 255, ${ripple.alpha * 0.6})`); // mid strong glow
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.9})`);   // edge very bright
+    gradient.addColorStop(0,  `rgba(220, 240, 255, ${ripple.alpha * 0.15})`);
+    gradient.addColorStop(0.5,`rgba(160, 210, 255, ${ripple.alpha * 0.7})`);
+    gradient.addColorStop(1,  `rgba(120, 190, 255, ${ripple.alpha * 1.0})`);
 
+    // Draw the glowing ripple
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
 
+    // Punch out transparent center (hollow ring effect)
+    ctx.save();
+    ctx.globalCompositeOperation = "destination-out";
+    ctx.beginPath();
+    const holeRadius = ripple.radius * 0.45; // adjust factor for hole size
+    ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
+
+    // Update ripple properties
     ripple.radius += ripple.growth * 0.3;
     ripple.alpha -= ripple.fade || 0.002;
 
+    // Remove ripple when faded and large enough
     if (ripple.alpha <= 0 && ripple.radius >= 300) {
       ripples.splice(index, 1);
     }
@@ -72,5 +84,3 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
-
-draw();
