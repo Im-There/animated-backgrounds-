@@ -63,11 +63,12 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Punch out a fully hollow center
+    // Punch out center that grows faster than ripple
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
-    const holeRadius = ripple.radius * 0.6; // bigger factor = larger hollow
+    // Hollow grows at 1.5x ripple radius speed
+    const holeRadius = ripple.radius * 0.6 + ripple.radius * 0.5; 
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
