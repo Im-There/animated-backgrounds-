@@ -19,7 +19,7 @@ canvas.addEventListener("click", (e) => {
     y: e.clientY,
     radius: 5,
     alpha: 1,
-    growth: 2.0,   // stronger growth
+    growth: 2.0,   // faster growth
     fade: 0.01     // slower fade so ripple lasts longer
   });
 });
@@ -62,14 +62,14 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Faster expansion (increased multiplier from 0.25 → 0.35)
+    // Faster expansion
     ripple.radius += ripple.growth * 0.35;
 
     // Slower fading so ripple can reach full size
     ripple.alpha -= ripple.fade || 0.01;
 
-    // Remove ripple once fully invisible
-    if (ripple.alpha <= 0) {
+    // Remove ripple only if alpha is gone AND radius >= 50
+    if (ripple.alpha <= 0 && ripple.radius >= 50) {
       ripples.splice(index, 1);
     }
   });
