@@ -12,6 +12,7 @@ window.addEventListener("resize", resizeCanvas);
 
 let ripples = [];
 
+// Add ripple on click
 canvas.addEventListener("click", (e) => {
   ripples.push({
     x: e.clientX,
@@ -19,11 +20,12 @@ canvas.addEventListener("click", (e) => {
     radius: 5,
     alpha: 1,
     growth: 2,
-    fade: 0.015
+    fade: 0.025 // faster fade so ripples clear out sooner
   });
 });
 
 function draw() {
+  // Slightly darken background each frame
   ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -33,8 +35,13 @@ function draw() {
       ripple.x, ripple.y, ripple.radius * 4.0
     );
 
-    const centerAlpha = Math.max(0, ripple.alpha * 0.6 * (1 - ripple.radius / (canvas.width * 0.5)));
+    // Center fades out as ripple grows
+    const centerAlpha = Math.max(
+      0,
+      ripple.alpha * 0.6 * (1 - ripple.radius / (canvas.width * 0.5))
+    );
 
+    // Softer transparency multipliers
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
     gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.5})`);
     gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.4})`);
@@ -44,9 +51,13 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
+    // Slower expansion
     ripple.radius += ripple.growth * 0.5;
-    ripple.alpha -= ripple.fade || 0.015;
 
+    // Faster fading
+    ripple.alpha -= ripple.fade || 0.025;
+
+    // Remove ripple when invisible
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
       ripples.splice(index, 1);
     }
