@@ -19,8 +19,8 @@ canvas.addEventListener("click", (e) => {
     y: e.clientY,
     radius: 5,
     alpha: 1,
-    growth: 1.2,   // slower expansion speed
-    fade: 0.02     // fade a bit faster
+    growth: 1.5,   // slightly faster growth so it reaches large size
+    fade: 0.02     // fade rate
   });
 });
 
@@ -31,7 +31,7 @@ setInterval(() => {
     y: Math.random() * canvas.height,
     radius: 5,
     alpha: 1,
-    growth: 1.2,
+    growth: 1.5,
     fade: 0.02
   });
 }, 400);
@@ -43,33 +43,32 @@ function draw() {
 
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
-      ripple.x, ripple.y, ripple.radius * 0.05,   // tighter inner glow
-      ripple.x, ripple.y, ripple.radius * 8.0     // much larger outer radius
+      ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
+      ripple.x, ripple.y, ripple.radius * 12.0    // much larger outer radius
     );
 
-    // Increase alpha multipliers slightly for stronger overlap,
-    // but keep them capped so it never turns fully opaque
-    const centerAlpha = Math.min(
-      0.35, // cap at 0.35
-      ripple.alpha * 0.3 * (1 - ripple.radius / (canvas.width * 0.9))
+    // Softer alpha values for blending
+    const centerAlpha = Math.max(
+      0,
+      ripple.alpha * 0.25 * (1 - ripple.radius / (canvas.width * 1.2))
     );
 
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${Math.min(0.2, ripple.alpha * 0.18)})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${Math.min(0.1, ripple.alpha * 0.07)})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.12})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.05})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Slower expansion but much larger coverage
-    ripple.radius += ripple.growth * 0.25;
+    // Expand slower but allow much larger coverage
+    ripple.radius += ripple.growth * 0.2;
 
-    // Faster fading
+    // Fade out
     ripple.alpha -= ripple.fade || 0.02;
 
-    // Remove ripple cleanly once alpha is gone
+    // Remove ripple once fully invisible
     if (ripple.alpha <= 0) {
       ripples.splice(index, 1);
     }
