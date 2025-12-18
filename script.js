@@ -42,33 +42,29 @@ function draw() {
   ctx.fillRect(0, 0, canvas.width, canvas.height);
 
   ripples.forEach((ripple, index) => {
+    // Gradient is just for visual effect, not controlling expansion
     const gradient = ctx.createRadialGradient(
-      ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
-      ripple.x, ripple.y, ripple.radius * 15.0    // much larger outer radius
+      ripple.x, ripple.y, ripple.radius * 0.05,
+      ripple.x, ripple.y, ripple.radius * 15.0
     );
 
-    // Softer alpha values for blending
-    const centerAlpha = Math.max(
-      0,
-      ripple.alpha * 0.3 * (1 - ripple.radius / (canvas.width * 1.5))
-    );
-
-    gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.18})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.08})`);
+    // Alpha controls visibility only
+    gradient.addColorStop(0, `rgba(220, 240, 255, ${ripple.alpha * 0.3})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.15})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.05})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Faster expansion
-    ripple.radius += ripple.growth * 0.35;
+    // Expansion continues regardless of alpha
+    ripple.radius += ripple.growth * 0.4;
 
-    // Slower fading so ripple can reach full size
+    // Fade out separately
     ripple.alpha -= ripple.fade || 0.01;
 
-    // Remove ripple only if alpha is gone AND radius >= 50
+    // Remove ripple only when fully faded AND expanded beyond 50px
     if (ripple.alpha <= 0 && ripple.radius >= 50) {
       ripples.splice(index, 1);
     }
