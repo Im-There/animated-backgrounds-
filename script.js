@@ -1,3 +1,28 @@
+// Get canvas and context
+const canvas = document.getElementById("mysticalCanvas");
+const ctx = canvas.getContext("2d");
+
+// Function to resize canvas
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+resizeCanvas();
+window.addEventListener("resize", resizeCanvas);
+
+let ripples = [];
+
+canvas.addEventListener("click", (e) => {
+  ripples.push({
+    x: e.clientX,
+    y: e.clientY,
+    radius: 5,
+    alpha: 1,
+    growth: 2,
+    fade: 0.015
+  });
+});
+
 function draw() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -19,11 +44,8 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Slower expansion
-    ripple.radius += ripple.growth * 0.5;  
-
-    // Faster fading (increased from 0.01 to 0.015)
-    ripple.alpha -= ripple.fade || 0.015;  
+    ripple.radius += ripple.growth * 0.5;
+    ripple.alpha -= ripple.fade || 0.015;
 
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
       ripples.splice(index, 1);
@@ -32,3 +54,5 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
+
+draw();
