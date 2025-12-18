@@ -44,18 +44,18 @@ function draw() {
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
       ripple.x, ripple.y, ripple.radius * 0.05,   // tighter inner glow
-      ripple.x, ripple.y, ripple.radius * 6.0     // much larger outer radius
+      ripple.x, ripple.y, ripple.radius * 8.0     // much larger outer radius
     );
 
     // Softer alpha values for faster blending
     const centerAlpha = Math.max(
       0,
-      ripple.alpha * 0.25 * (1 - ripple.radius / (canvas.width * 0.8))
+      ripple.alpha * 0.25 * (1 - ripple.radius / (canvas.width * 0.9))
     );
 
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.15})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.08})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.12})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.05})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
@@ -63,13 +63,13 @@ function draw() {
     ctx.fill();
 
     // Slower expansion but much larger coverage
-    ripple.radius += ripple.growth * 0.2;
+    ripple.radius += ripple.growth * 0.25;
 
     // Faster fading
     ripple.alpha -= ripple.fade || 0.02;
 
-    // Remove ripple when invisible
-    if (ripple.alpha <= 0 && ripple.radius > canvas.width * 1.2) {
+    // Remove ripple cleanly once alpha is gone
+    if (ripple.alpha <= 0) {
       ripples.splice(index, 1);
     }
   });
