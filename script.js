@@ -57,9 +57,15 @@ function draw() {
       ripple.alpha * 0.3 * (1 - ripple.radius / (canvas.width * 1.5))
     );
 
-    gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.18})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.08})`);
+    const gradient = ctx.createRadialGradient(
+      ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
+      ripple.x, ripple.y, ripple.radius * 25.0    // outer glow
+    );
+    
+    // Stronger edge visibility, center fades quickly
+    gradient.addColorStop(0, `rgba(220, 240, 255, ${ripple.alpha * 0.02})`);   // center almost invisible
+    gradient.addColorStop(0.4, `rgba(160, 210, 255, ${ripple.alpha * 0.15})`); // mid faint
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.35})`);   // edge bright & visible
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
