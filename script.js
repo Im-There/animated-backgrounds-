@@ -47,15 +47,16 @@ function draw() {
       ripple.x, ripple.y, ripple.radius * 8.0     // much larger outer radius
     );
 
-    // Softer alpha values for faster blending
-    const centerAlpha = Math.max(
-      0,
-      ripple.alpha * 0.25 * (1 - ripple.radius / (canvas.width * 0.9))
+    // Increase alpha multipliers slightly for stronger overlap,
+    // but keep them capped so it never turns fully opaque
+    const centerAlpha = Math.min(
+      0.35, // cap at 0.35
+      ripple.alpha * 0.3 * (1 - ripple.radius / (canvas.width * 0.9))
     );
 
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
-    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.12})`);
-    gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.05})`);
+    gradient.addColorStop(0.5, `rgba(160, 210, 255, ${Math.min(0.2, ripple.alpha * 0.18)})`);
+    gradient.addColorStop(1, `rgba(120, 190, 255, ${Math.min(0.1, ripple.alpha * 0.07)})`);
 
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
