@@ -1,3 +1,19 @@
+// Get canvas and context
+const canvas = document.getElementById("canvas");
+const ctx = canvas.getContext("2d");
+
+// Function to resize canvas
+function resizeCanvas() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+
+// Initial resize
+resizeCanvas();
+
+// Adjust canvas size whenever window is resized
+window.addEventListener("resize", resizeCanvas);
+
 function draw() {
   ctx.fillStyle = "rgba(0, 0, 0, 0.08)";
   ctx.fillRect(0, 0, canvas.width, canvas.height);
@@ -8,10 +24,8 @@ function draw() {
       ripple.x, ripple.y, ripple.radius * 4.0
     );
 
-    // Center fades out as ripple grows
     const centerAlpha = Math.max(0, ripple.alpha * 0.6 * (1 - ripple.radius / (canvas.width * 0.5)));
 
-    // Reduced alpha multipliers for transparency
     gradient.addColorStop(0, `rgba(220, 240, 255, ${centerAlpha})`);
     gradient.addColorStop(0.5, `rgba(160, 210, 255, ${ripple.alpha * 0.5})`);
     gradient.addColorStop(1, `rgba(120, 190, 255, ${ripple.alpha * 0.4})`);
@@ -21,10 +35,7 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Slower expansion
     ripple.radius += ripple.growth * 0.5;  
-
-    // Faster fading
     ripple.alpha -= ripple.fade || 0.01;  
 
     if (ripple.alpha <= 0 && ripple.radius > canvas.width * 0.5) {
@@ -34,3 +45,5 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
+
+draw();
