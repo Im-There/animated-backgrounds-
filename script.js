@@ -12,27 +12,27 @@ window.addEventListener("resize", resizeCanvas);
 
 let ripples = [];
 
-// Add ripple on click (optional interactive effect)
+// Add ripple on click
 canvas.addEventListener("click", (e) => {
   ripples.push({
     x: e.clientX,
     y: e.clientY,
     radius: 5,
     alpha: 1,
-    growth: 3.0,   // increased growth rate
-    fade: 0.005    // slower fade so ripple lasts longer
+    growth: 1.2,   // slower expansion
+    fade: 0.002    // much slower fade
   });
 });
 
-// Auto-spawn ripples every 400ms at random positions
+// Auto-spawn ripples every 400ms
 setInterval(() => {
   ripples.push({
     x: Math.random() * canvas.width,
     y: Math.random() * canvas.height,
     radius: 5,
     alpha: 1,
-    growth: 3.0,
-    fade: 0.005
+    growth: 1.2,   // slower expansion
+    fade: 0.002    // slower fade
   });
 }, 400);
 
@@ -44,10 +44,9 @@ function draw() {
   ripples.forEach((ripple, index) => {
     const gradient = ctx.createRadialGradient(
       ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
-      ripple.x, ripple.y, ripple.radius * 25.0    // much larger outer radius
+      ripple.x, ripple.y, ripple.radius * 25.0    // outer glow
     );
 
-    // Softer alpha values for blending
     const centerAlpha = Math.max(
       0,
       ripple.alpha * 0.3 * (1 - ripple.radius / (canvas.width * 1.5))
@@ -62,14 +61,14 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Faster expansion for larger ripples
-    ripple.radius += ripple.growth * 0.5;
+    // Slower expansion
+    ripple.radius += ripple.growth * 0.3;
 
-    // Slower fading so ripple can reach full size
-    ripple.alpha -= ripple.fade || 0.005;
+    // Much slower fading
+    ripple.alpha -= ripple.fade || 0.002;
 
-    // Remove ripple only when fully faded AND radius >= 150
-    if (ripple.alpha <= 0 && ripple.radius >= 150) {
+    // Remove ripple only when fully faded AND radius >= 300
+    if (ripple.alpha <= 0 && ripple.radius >= 300) {
       ripples.splice(index, 1);
     }
   });
