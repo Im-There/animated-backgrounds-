@@ -73,8 +73,8 @@ function draw() {
       // keep hole smaller until ripple reaches 300
       holeRadius = ripple.radius * 0.8;
     } else {
-      // after 300, hole grows faster than ripple
-      holeRadius = ripple.radius * 1.4;
+      // after 300, hole grows much faster than ripple
+      holeRadius = ripple.radius * 1.6;
     }
 
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
@@ -85,7 +85,7 @@ function draw() {
     if (ripple.radius < 300) {
       ripple.radius += ripple.growth * 0.3; // normal growth
     } else {
-      ripple.radius += ripple.growth * 0.1; // slower growth after 300
+      ripple.radius += ripple.growth * 0.05; // much slower growth after 300
     }
     ripple.alpha -= ripple.fade || 0.002;
 
