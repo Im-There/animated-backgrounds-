@@ -85,3 +85,5 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
+// At the end of your script.js file
+draw();
