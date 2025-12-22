@@ -65,19 +65,17 @@ function draw() {
     ctx.fill();
     
     // Punch out center
-    // Punch out center (exponential acceleration)
+    // Punch out center (spawn at ~90%, then accelerate)
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
     
-    // Exponential hole growth: starts modest, then accelerates
     let holeRadius;
     if (ripple.radius < 300) {
-      // start with hole already bigger than half the ripple
-      holeRadius = ripple.radius * 0.7;
+      // spawn with hole already ~90% of ripple size
+      holeRadius = ripple.radius * 0.9;
     } else {
       // exponential acceleration: hole overtakes ripple quickly
-      // factor grows faster as ripple gets larger
       holeRadius = ripple.radius * (1.2 + Math.pow((ripple.radius - 300) / 150, 2));
     }
     
