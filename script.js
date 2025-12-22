@@ -48,38 +48,34 @@ function draw() {
 
   ripples.forEach((ripple, index) => {
     // Create radial gradient for glow
+    // Create radial gradient for glow with tighter spread
     const gradient = ctx.createRadialGradient(
-      ripple.x, ripple.y, ripple.radius * 0.05,   // inner glow
-      ripple.x, ripple.y, ripple.radius * 25.0    // outer glow
+      ripple.x, ripple.y, ripple.radius * 0.2,   // inner glow closer to ripple size
+      ripple.x, ripple.y, ripple.radius * 3.0    // outer glow not too far
     );
-
-    gradient.addColorStop(0,  `rgba(220, 240, 255, ${ripple.alpha * 0.25})`);
-    gradient.addColorStop(0.5,`rgba(160, 210, 255, ${ripple.alpha * 0.7})`);
-    gradient.addColorStop(1,  `rgba(120, 190, 255, ${ripple.alpha * 1.0})`);
-
+    
+    gradient.addColorStop(0,  `rgba(220, 240, 255, ${ripple.alpha * 0.9})`);
+    gradient.addColorStop(0.5,`rgba(160, 210, 255, ${ripple.alpha * 0.6})`);
+    gradient.addColorStop(1,  `rgba(120, 190, 255, ${ripple.alpha * 0.0})`);
+    
     // Draw glowing ripple
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
-
-    // Punch out center (bright start, gradual hollow)
+    
+    // Punch out center only after ripple is large enough
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
     
     let holeRadius;
     if (ripple.radius < 300) {
-      // keep hole much smaller so the disk looks bright
-      holeRadius = ripple.radius * 0.5;
+      // keep hole much smaller so glow is visible
+      holeRadius = ripple.radius * 0.4;
     } else {
-      // after 300, hole grows faster to fade out
+      // after 300, hole overtakes ripple gradually
       holeRadius = ripple.radius * 1.1;
-    }
-    
-    // Ensure hole never larger than ripple before 300
-    if (ripple.radius < 300 && holeRadius >= ripple.radius) {
-      holeRadius = ripple.radius - 1;
     }
     
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
