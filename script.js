@@ -65,17 +65,18 @@ function draw() {
     ctx.fill();
     
     // Punch out center
+    // Punch out center (larger start, faster growth after 300)
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
     
     let holeRadius;
     if (ripple.radius < 300) {
-      // keep hole smaller so glow is visible
-      holeRadius = ripple.radius * 0.4;
+      // start with hole already a bit bigger (half the ripple size)
+      holeRadius = ripple.radius * 0.6;
     } else {
-      // after 300, hole grows much faster than ripple
-      holeRadius = ripple.radius * 1.3;  // overtakes ripple clearly
+      // after 300, hole grows faster than ripple
+      holeRadius = ripple.radius * 1.4;
     }
     
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
@@ -84,7 +85,7 @@ function draw() {
     
     // Update ripple properties
     if (ripple.radius < 300) {
-      ripple.radius += ripple.growth * 0.3; // normal growth
+      ripple.radius += ripple.growth * 0.25; // slightly slower growth before 300
     } else {
       ripple.radius += ripple.growth * 0.02; // very slow growth after 300
     }
