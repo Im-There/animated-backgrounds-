@@ -63,12 +63,20 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Punch out center that grows faster than ripple
+    // Punch out center that grows faster than ripple only after 300px
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
-    // Hollow grows at 1.5x ripple radius speed
-    const holeRadius = ripple.radius * 0.6 + ripple.radius * 0.5; 
+
+    let holeRadius;
+    if (ripple.radius < 300) {
+      // keep hole smaller than ripple until 300
+      holeRadius = ripple.radius * 0.8;
+    } else {
+      // after 300, hole overtakes ripple
+      holeRadius = ripple.radius * 1.2;
+    }
+
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
@@ -85,5 +93,6 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
-// At the end of your script.js file
+
+// Kick off animation loop
 draw();
