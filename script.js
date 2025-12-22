@@ -63,24 +63,29 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Punch out center
+    // Punch out center (drop‑in replacement)
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
-
+    
+    // Ensure hole is always at least as large as ripple
     let holeRadius;
     if (ripple.radius < 300) {
-      // keep hole smaller until ripple reaches 300
-      holeRadius = ripple.radius * 0.8;
+      // keep hole slightly smaller until ripple reaches 300
+      holeRadius = ripple.radius * 0.95;
     } else {
-      // after 300, hole grows much faster than ripple
-      holeRadius = ripple.radius * 1.6;
+      // after 300, hole overtakes ripple completely
+      holeRadius = ripple.radius * 1.4;
     }
-
+    
+    // Guarantee hole never smaller than ripple
+    if (holeRadius < ripple.radius) {
+      holeRadius = ripple.radius;
+    }
+    
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
-
     // Update ripple properties
     if (ripple.radius < 300) {
       ripple.radius += ripple.growth * 0.3; // normal growth
