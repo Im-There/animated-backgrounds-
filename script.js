@@ -28,8 +28,8 @@ function addRipple(x, y) {
     y,
     radius: 5,
     alpha: 1,
-    growth: 1.2,   // slower expansion
-    fade: 0.002    // slower fade
+    growth: 1.2,   // base expansion speed
+    fade: 0.002    // fade rate
   });
 
   rippleCount++;
@@ -63,18 +63,18 @@ function draw() {
     ctx.fillStyle = gradient;
     ctx.fill();
 
-    // Punch out center that grows faster than ripple only after 300px
+    // Punch out center
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
 
     let holeRadius;
     if (ripple.radius < 300) {
-      // keep hole smaller than ripple until 300
+      // keep hole smaller until ripple reaches 300
       holeRadius = ripple.radius * 0.8;
     } else {
-      // after 300, hole overtakes ripple
-      holeRadius = ripple.radius * 1.2;
+      // after 300, hole grows faster than ripple
+      holeRadius = ripple.radius * 1.4;
     }
 
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
@@ -82,7 +82,11 @@ function draw() {
     ctx.restore();
 
     // Update ripple properties
-    ripple.radius += ripple.growth * 0.3;
+    if (ripple.radius < 300) {
+      ripple.radius += ripple.growth * 0.3; // normal growth
+    } else {
+      ripple.radius += ripple.growth * 0.1; // slower growth after 300
+    }
     ripple.alpha -= ripple.fade || 0.002;
 
     // Remove ripple when faded and large enough
