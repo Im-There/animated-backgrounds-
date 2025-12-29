@@ -73,8 +73,9 @@ function draw() {
       // hole starts at ~90% of ripple size
       holeRadius = ripple.radius * 0.9;
     } else {
-      // after 300px, accelerate hole growth sharply
-      holeRadius = ripple.radius * (1.5 + Math.pow((ripple.radius - 300) / 50, 2));
+      // after 300px, drastic acceleration (+1 or more multiplier)
+      holeRadius = ripple.radius * (1.0 + (ripple.radius - 300) * 0.05);
+      // e.g. at radius=400 → holeRadius ≈ 1.0 + 5 = 6× ripple size
     }
 
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
@@ -85,7 +86,7 @@ function draw() {
     if (ripple.radius < 300) {
       ripple.radius += ripple.growth * 0.25; // normal growth before 300
     } else {
-      ripple.radius += ripple.growth * 0.01; // slower ripple expansion after 300
+      ripple.radius += ripple.growth * 0.01; // ripple slows down after 300
     }
     ripple.alpha -= ripple.fade || 0.002;
 
@@ -95,7 +96,7 @@ function draw() {
     }
   });
 
-  // 🔄 Clear background every 100 ripples (like your original code)
+  // Clear background every 100 ripples
   if (rippleCount > 0 && rippleCount % 100 === 0) {
     ctx.fillStyle = "black";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
