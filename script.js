@@ -95,8 +95,11 @@ function draw() {
     }
   });
 
+  // 🔄 Clear background every 100 ripples (like your original code)
+  if (rippleCount > 0 && rippleCount % 100 === 0) {
+    ctx.fillStyle = "black";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+  }
+
   requestAnimationFrame(draw);
 }
-
-// Kick off animation loop
-draw();
