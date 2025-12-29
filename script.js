@@ -48,50 +48,47 @@ function draw() {
 
   ripples.forEach((ripple, index) => {
     // Create radial gradient for glow
-    // Create radial gradient for glow with tighter spread
     const gradient = ctx.createRadialGradient(
-      ripple.x, ripple.y, ripple.radius * 0.2,   // inner glow closer to ripple size
-      ripple.x, ripple.y, ripple.radius * 3.0    // outer glow not too far
+      ripple.x, ripple.y, ripple.radius * 0.2,
+      ripple.x, ripple.y, ripple.radius * 3.0
     );
-    
+
     gradient.addColorStop(0,  `rgba(220, 240, 255, ${ripple.alpha * 0.9})`);
     gradient.addColorStop(0.5,`rgba(160, 210, 255, ${ripple.alpha * 0.6})`);
     gradient.addColorStop(1,  `rgba(120, 190, 255, ${ripple.alpha * 0.0})`);
-    
+
     // Draw glowing ripple
     ctx.beginPath();
     ctx.arc(ripple.x, ripple.y, ripple.radius, 0, Math.PI * 2);
     ctx.fillStyle = gradient;
     ctx.fill();
-    
-    // Punch out center
-    // Punch out center (spawn at ~90%, then accelerate)
+
     // Punch out center
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
     ctx.beginPath();
-    
+
     let holeRadius;
-    if (ripple.radius < 500) {
-      // spawn with hole already ~90% of ripple size
+    if (ripple.radius < 300) {
+      // hole starts at ~90% of ripple size
       holeRadius = ripple.radius * 0.9;
     } else {
-      // accelerate much faster after 500
-      // exponential growth factor increases sharply
-      holeRadius = ripple.radius * (1.5 + Math.pow((ripple.radius - 500) / 80, 2));
+      // after 300px, accelerate hole growth sharply
+      holeRadius = ripple.radius * (1.5 + Math.pow((ripple.radius - 300) / 50, 2));
     }
-    
+
     ctx.arc(ripple.x, ripple.y, holeRadius, 0, Math.PI * 2);
     ctx.fill();
     ctx.restore();
-    
+
     // Update ripple properties
     if (ripple.radius < 300) {
       ripple.radius += ripple.growth * 0.25; // normal growth before 300
     } else {
-      ripple.radius += ripple.growth * 0.01; // very slow growth after 300
+      ripple.radius += ripple.growth * 0.01; // slower ripple expansion after 300
     }
     ripple.alpha -= ripple.fade || 0.002;
+
     // Remove ripple when faded and large enough
     if (ripple.alpha <= 0 && ripple.radius >= 300) {
       ripples.splice(index, 1);
