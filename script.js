@@ -1,51 +1,10 @@
-// Get canvas and context
-const canvas = document.getElementById("mysticalCanvas");
-const ctx = canvas.getContext("2d");
-
-// Resize canvas to full window
-function resizeCanvas() {
-  canvas.width = window.innerWidth;
-  canvas.height = window.innerHeight;
-
-  // Paint solid black background once
-  ctx.fillStyle = "black";
-  ctx.fillRect(0, 0, canvas.width, canvas.height);
-}
-resizeCanvas();
-window.addEventListener("resize", resizeCanvas);
-
-let ripples = [];
-let rippleCount = 0;
-
-// Add ripple on click
-canvas.addEventListener("click", (e) => {
-  addRipple(e.clientX, e.clientY);
-});
-
-// Auto-spawn ripples every 400ms
-setInterval(() => {
-  addRipple(Math.random() * canvas.width, Math.random() * canvas.height);
-}, 400);
-
-// Create new ripple
-function addRipple(x, y) {
-  ripples.push({
-    x,
-    y,
-    radius: 5,
-    alpha: 1,
-    growth: 1.2,
-    fade: 0.002
-  });
-  rippleCount++;
-}
-
-// Draw loop
 function draw() {
   // Always draw on top of solid black background
   ctx.globalCompositeOperation = "source-over";
 
-  // Loop backwards so we can safely remove ripples
+  // IMPORTANT: Do NOT clear the canvas here.
+  // Just draw ripples on top of the existing black background.
+
   for (let i = ripples.length - 1; i >= 0; i--) {
     const ripple = ripples[i];
 
@@ -87,4 +46,3 @@ function draw() {
 
   requestAnimationFrame(draw);
 }
-draw();
